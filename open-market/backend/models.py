@@ -3,18 +3,28 @@ import sqlite3
 conn = sqlite3.connect("cards.db")
 cursor = conn.cursor()
 
-sql = '''CREATE TABLE IF NOT EXISTS cards (
-    id INTEGER PRIMARY KEY AUTOINCREMENT, -- Unique ID for the card
-    title TEXT NOT NULL,                  -- Title of the card
-    description TEXT,                     -- Card description
-    image_url TEXT NOT NULL,              -- URL of the uploaded card image
-    user_instagram TEXT NOT NULL,         -- Instagram handle of the uploader
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP, -- Timestamp when card was uploaded
-    expires_at DATETIME,                  -- Timestamp when card will expire (24 hours later)
-    downvotes INTEGER DEFAULT 0           -- Number of downvotes
+cards_table = '''CREATE TABLE IF NOT EXISTS cards (
+    id INTEGER PRIMARY KEY AUTOINCREMENT, 
+    title TEXT NOT NULL,                  
+    description TEXT,                    
+    image_url TEXT NOT NULL,              
+    user_instagram TEXT NOT NULL,         
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP, 
+    expires_at DATETIME,                  
+    downvotes INTEGER DEFAULT 0           
 );'''
 
-cursor.execute(sql)
-print("Table created")
+cursor.execute(cards_table)
+print("Card table created")
+
+users_table = '''CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        email TEXT NOT NULL UNIQUE,
+        instagram TEXT,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        ); '''
+cursor.execute(users_table)
+print("User table created")
 conn.commit()
 conn.close()

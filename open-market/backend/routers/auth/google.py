@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 import os
 import requests
 from fastapi.responses import RedirectResponse
+import sqlite3
 
 router = APIRouter()
 load_dotenv()
@@ -45,5 +46,26 @@ def google_callback(code: str):
     user_info = requests.get("https://www.googleapis.com/oauth2/v1/userinfo",
                              headers={"Authorization": f"Bearer {access_token}"}).json()
     
+    name = user_info.get("name")
+    email = user_info.get("email")
+    instagram = None
+
+    conn = sqlite3.connect("cards.db")
+    cur = conn.cursor()
+
+    existing_user = cur.execute(
+        "SELECT * FROM users WHERE email = ?", (email,)
+    ).fetchone()
+    if existing_user:
+        return {"message": "User already exists", "user": existing_user}
+    
+    cur.execute(
+        "INSERT INTO users (name, email, instagram, created_at) VALUES(?,?,?,?)",
+        (name, email,instagram )
+    )
+    conn.commit()
+    new_user_id = cur.lastrowid
+    conn.close()
+    
     #Returns the user's profile information to the frontend for use
-    return {"user": user_info}
+    return {"message": f"User added successfully with ID {new_user_id}", "user": user_info}
