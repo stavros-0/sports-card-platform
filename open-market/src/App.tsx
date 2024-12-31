@@ -1,34 +1,19 @@
-import { Routes, Route, createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
+import GoogleCallback from "./pages/GoogleCallback";
 
-function Root(){
-  return(
-    <>
-    <Routes>
-      
-      <Route path={`/`} element={<Home />}/>
-      <Route path={`/login`} element={<Login />}/>
-    </Routes>
-    </>
-  )
-}
-
-const router = createBrowserRouter(
-  [
-    { path: "*", Component: Root },
-  ]
-);
+const router = createBrowserRouter([
+  { path: "/", element: <Login /> },
+  { path: "/auth/google/callback", element: <GoogleCallback /> },
+]);
 
 function App() {
-  
-
   return (
     <>
-     <RouterProvider router={router} />
+      <RouterProvider router={router} />
     </>
-  )
+  );
 }
 
-export default App
-
+export default App;

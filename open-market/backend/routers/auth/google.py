@@ -3,6 +3,7 @@ import urllib.parse
 from dotenv import load_dotenv
 import os
 import requests
+from fastapi.responses import RedirectResponse
 
 router = APIRouter()
 load_dotenv()
@@ -11,6 +12,7 @@ CLIENT_ID = os.getenv('CLIENT_ID')
 REDIRECT_URI = os.getenv('REDIRECT_URI')
 CLIENT_SECRET = os.getenv('CLIENT_SECRET')
 
+#Generates a Google OAuth URL and redirects the user to Google for login and consent.
 @router.get("/auth/google")
 def google_login():
     google_auth_url = ("https://accounts.google.com/o/oauth2/v2/auth?" + urllib.parse.urlencode({
@@ -19,11 +21,12 @@ def google_login():
         "response_type": "code",
         "scope": "profile email",
     }))
-    return {"url": google_auth_url}
+    return RedirectResponse(url=google_auth_url)
 
+#Handles the redirect from Google after user login.
 @router.get("/auth/google/callback")
 def google_callback(code: str):
-    token_url = "https://ouath2.googleapis.com/token"
+    token_url = "https://oauth2.googleapis.com/token"
     payload = {
         "client_id": CLIENT_ID,
         "client_secret": CLIENT_SECRET,
@@ -42,4 +45,5 @@ def google_callback(code: str):
     user_info = requests.get("https://www.googleapis.com/oauth2/v1/userinfo",
                              headers={"Authorization": f"Bearer {access_token}"}).json()
     
+    #Returns the user's profile information to the frontend for use
     return {"user": user_info}
