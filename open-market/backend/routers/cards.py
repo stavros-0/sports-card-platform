@@ -1,13 +1,14 @@
 from fastapi import APIRouter,FastAPI,HTTPException
-from backend.crud import get_card_by_id, del_cards, get_cards, get_user_by_id, del_users, add_users
+from backend.crud import get_card_by_id, del_cards, get_user_by_id, del_users, add_users
 import sqlite3
-
+import os
 router = APIRouter()
+conn = sqlite3.connect(os.path.abspath("cards.db"))
 
 #connect get_card_by_id to api route
 @router.get("/cards/{id}")
 def read_cards(id:int):
-    conn=sqlite3.connect("cards.db")
+    
     card = get_card_by_id(conn, id)
     conn.close()
     if not card:
@@ -17,7 +18,7 @@ def read_cards(id:int):
 #remove_cards
 @router.delete("/cards/{id}")
 def remove_cards(id:int):
-    conn=sqlite3.connect("cards.db")
+    
     delete = del_cards(conn,id)
     conn.close()
     if not delete == 0:
@@ -27,7 +28,7 @@ def remove_cards(id:int):
 #add_cards
 @router.post("/cards/")
 def add_cards(card:dict):
-    conn=sqlite3.connect("cards.db")
+    
     new_id = add_cards(conn, (card["title"], card["description"], card["image_url"], card["user_instagram"], card["expires_at"]))
     conn.close()
     
@@ -39,7 +40,7 @@ def add_cards(card:dict):
 #get user
 @router.get("/users/{id}")
 def read_users(id:int):
-    conn=sqlite3.connect("cards.db")
+    
     card = get_user_by_id(conn, id)
     conn.close()
     if not card:
@@ -49,7 +50,7 @@ def read_users(id:int):
 #remove user
 @router.delete("/users/{id}")
 def remove_cards(id:int):
-    conn=sqlite3.connect("cards.db")
+    
     delete = del_users(conn,id)
     conn.close()
     if not delete == 0:
@@ -59,7 +60,7 @@ def remove_cards(id:int):
 #add user
 @router.post("/users/")
 def add_user(user:dict):
-    conn=sqlite3.connect("cards.db")
+    
     new_id = add_users(conn, (user["name"], user["email"], user["instagram"], user["created_at"]))
     conn.close()
     

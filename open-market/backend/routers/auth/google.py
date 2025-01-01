@@ -5,6 +5,8 @@ import os
 import requests
 from fastapi.responses import RedirectResponse
 import sqlite3
+import os
+
 
 router = APIRouter()
 load_dotenv()
@@ -12,6 +14,10 @@ load_dotenv()
 CLIENT_ID = os.getenv('CLIENT_ID')
 REDIRECT_URI = os.getenv('REDIRECT_URI')
 CLIENT_SECRET = os.getenv('CLIENT_SECRET')
+PROJECT_DIR = os.path.dirname(os.path.abspath("open-market"))
+DB_PATH = os.path.join(PROJECT_DIR, "cards.db") 
+FRONTEND_URL = os.getenv("FRONTEND_URL")
+
 
 #Generates a Google OAuth URL and redirects the user to Google for login and consent.
 @router.get("/auth/google")
@@ -50,22 +56,25 @@ def google_callback(code: str):
     email = user_info.get("email")
     instagram = None
 
-    conn = sqlite3.connect("cards.db")
+    conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
 
     existing_user = cur.execute(
         "SELECT * FROM users WHERE email = ?", (email,)
     ).fetchone()
     if existing_user:
-        return {"message": "User already exists", "user": existing_user}
+        
+        return RedirectResponse(url=f"{FRONTEND_URL}/home")
     
     cur.execute(
-        "INSERT INTO users (name, email, instagram, created_at) VALUES(?,?,?,?)",
+        "INSERT INTO users (name, email, instagram) VALUES(?,?,?)",
         (name, email,instagram )
     )
+   
     conn.commit()
     new_user_id = cur.lastrowid
     conn.close()
     
     #Returns the user's profile information to the frontend for use
-    return {"message": f"User added successfully with ID {new_user_id}", "user": user_info}
+    
+    return RedirectResponse(url=f"{FRONTEND_URL}/home")
