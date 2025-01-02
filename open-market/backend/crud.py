@@ -28,7 +28,7 @@ def get_cards(conn):
     try: 
         cur = conn.cursor()
         cur.execute(sql)
-        return cur.fetchall()  # Fetch all rows from the query
+        return cur.fetchall()  
     except sqlite3.OperationalError as e:
         print(e)
         return None

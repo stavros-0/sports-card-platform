@@ -63,8 +63,9 @@ def google_callback(code: str):
         "SELECT * FROM users WHERE email = ?", (email,)
     ).fetchone()
     if existing_user:
-        
-        return RedirectResponse(url=f"{FRONTEND_URL}/home")
+
+        #return {"message": f"User added successfully", "user": user_info}
+        return RedirectResponse(url="http://localhost:5173/home")
     
     cur.execute(
         "INSERT INTO users (name, email, instagram) VALUES(?,?,?)",
@@ -77,4 +78,4 @@ def google_callback(code: str):
     
     #Returns the user's profile information to the frontend for use
     
-    return RedirectResponse(url=f"{FRONTEND_URL}/home")
+    return RedirectResponse(url="http://localhost:5173/home")

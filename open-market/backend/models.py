@@ -1,5 +1,6 @@
 import sqlite3
 import os
+from pydantic import BaseModel
 
 db_path = os.path.abspath("cards.db")
 conn = sqlite3.connect(db_path)
@@ -18,9 +19,11 @@ cards_table = ('''CREATE TABLE IF NOT EXISTS cards (
     expires_at DATETIME,                  
     downvotes INTEGER DEFAULT 0           
 );''')
-
-cursor.execute(cards_table)
-print("Card table created")
+try:
+    cursor.execute(cards_table)
+    print("Card table created")
+except sqlite3.OperationalError as e:
+    print(f"Error {e}")
 
 users_table = ('''CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -29,7 +32,11 @@ users_table = ('''CREATE TABLE IF NOT EXISTS users (
         instagram TEXT,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
         ); ''')
-cursor.execute(users_table)
-print("User table created")
+try:
+    cursor.execute(users_table)
+    print("User table created")
+except sqlite3.OperationalError as e:
+    print(f"Error {e}")
+
 conn.commit()
 conn.close()
