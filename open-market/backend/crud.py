@@ -1,14 +1,14 @@
 import sqlite3
 
 def add_cards(conn, card):
-    sql = ''' INSERT INTO cards(title, description, image_url, user_instagram, expires_at)
-              VALUES(?,?,?,?,?) '''
+    sql = ''' INSERT INTO cards(title, description, image_url, user_instagram)
+              VALUES(?,?,?,?) '''
     try:
         cur = conn.cursor()
         cur.execute(sql, card)
         conn.commit()
         return cur.lastrowid
-    except sqlite3.OperationError as e:
+    except sqlite3.OperationalError as e:
         print(e)
         return -1
 

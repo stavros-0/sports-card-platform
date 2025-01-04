@@ -1,10 +1,11 @@
-from fastapi import APIRouter,FastAPI,HTTPException
-from backend.crud import get_card_by_id, del_cards, get_user_by_id, del_users, add_users, get_cards
+from fastapi import APIRouter,FastAPI,HTTPException, File, UploadFile
+from backend.crud import get_card_by_id, del_cards, get_user_by_id, del_users, add_users, get_cards, add_cards
 import sqlite3
 import os
+import shutil
+from datetime import datetime, timedelta
 
 router = APIRouter()
-conn = sqlite3.connect(os.path.abspath("cards.db"))
 
 #connect get_card_by_id to api route
 @router.get("/cards/{id}")
@@ -20,12 +21,14 @@ def read_cards(id:int):
 @router.get("/cards/")
 def get_all_cards():
     conn = sqlite3.connect(os.path.abspath("cards.db"))
-    card = get_cards(conn)
+    conn.row_factory = sqlite3.Row
+    cards = get_cards(conn)
     conn.close()
+    cards = [dict(card) for card in cards]
     
-    if not card:
+    if not cards:
         raise HTTPException(status_code=404, detail="No cards found")
-    return card
+    return cards
     
 
 #remove_cards
@@ -40,9 +43,9 @@ def remove_cards(id:int):
 
 #add_cards
 @router.post("/cards/")
-def add_cards(card:dict):
+def adding_cards(card:dict):
     conn = sqlite3.connect(os.path.abspath("cards.db"))
-    new_id = add_cards(conn, (card["title"], card["description"], card["image_url"], card["user_instagram"], card["expires_at"]))
+    new_id = add_cards(conn, (card["title"], card["description"], card["image_url"], card["user_instagram"]))
     conn.close()
     
     if not new_id:
@@ -81,3 +84,9 @@ def add_user(user:dict):
         raise HTTPException(status_code=400, detail="User not added")
     return {"message": f"User successfully added with id {new_id}"}
       
+@router.post("/upload")
+async def upload_image(file: UploadFile = File(...)):
+    file_path=f"uploads/{file.filename}"
+    with open(file_path, "wb") as f:
+        shutil.copyfileobj(file.file, f)
+    return {"file_path": file_path,"expires_at": datetime.utcnow()+ timedelta(hours=24)}
