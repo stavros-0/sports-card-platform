@@ -3,6 +3,7 @@ import axios from "axios";
 import {Card} from "../types/Card";
 import AddCardForm from "../components/AddCardForm";
 
+
 export default function Home(){
     const [cards,setCards] = useState<Card[]>([]);
     useEffect(()=>{
@@ -16,7 +17,7 @@ export default function Home(){
         <AddCardForm/>
         <div className="card-grid">
             {cards.map((card) =>
-            <div key={card.id} className="card">
+            <div key={card.id} className="border border-gray-300 rounded p-4 mb-4">
                 <img src={card.image_url} alt={card.title}/>
                 <h2>{card.title}</h2>
                 <p>{card.description}</p>

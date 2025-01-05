@@ -4,6 +4,7 @@ import sqlite3
 import os
 import shutil
 from datetime import datetime, timedelta
+import boto3
 
 router = APIRouter()
 
@@ -25,6 +26,14 @@ def get_all_cards():
     cards = get_cards(conn)
     conn.close()
     cards = [dict(card) for card in cards]
+    for card in cards:
+        if not card["image_url"]:
+            continue
+        card["image_url"] = s3_client.generate_presigned_url(
+            'get_object',
+            Params={'Bucket': 'openmarketimages', 'Key': card["image_url"]},
+            ExpiresIn=3600
+        )
     
     if not cards:
         raise HTTPException(status_code=404, detail="No cards found")
@@ -84,9 +93,19 @@ def add_user(user:dict):
         raise HTTPException(status_code=400, detail="User not added")
     return {"message": f"User successfully added with id {new_id}"}
       
-@router.post("/upload")
+s3_client = boto3.client(
+    "s3",
+    aws_access_key_id=os.getenv("AWS_ACCESS_KEY_ID"),
+    aws_secret_access_key=os.getenv("AWS_SECRET_ACCESS_KEY"),
+    region_name=os.getenv("AWS_REGION")
+)
+@router.post("/upload/")
 async def upload_image(file: UploadFile = File(...)):
+    bucket_name = os.getenv("S3_BUCKET_NAME")
     file_path=f"uploads/{file.filename}"
-    with open(file_path, "wb") as f:
-        shutil.copyfileobj(file.file, f)
-    return {"file_path": file_path,"expires_at": datetime.utcnow()+ timedelta(hours=24)}
+    try:
+        s3_client.upload_fileobj(file.file, bucket_name, file_path )
+        file_url = f"https://{bucket_name}.s3.{os.getenv('AWS_REGION')}.amazonaws.com/{file_path}"
+        return {"url": file_path}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error uploading file: {str(e)}")
