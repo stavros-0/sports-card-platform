@@ -105,7 +105,6 @@ async def upload_image(file: UploadFile = File(...)):
     file_path=f"uploads/{file.filename}"
     try:
         s3_client.upload_fileobj(file.file, bucket_name, file_path )
-        file_url = f"https://{bucket_name}.s3.{os.getenv('AWS_REGION')}.amazonaws.com/{file_path}"
         return {"url": file_path}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error uploading file: {str(e)}")

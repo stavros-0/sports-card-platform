@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 import axios from "axios";
 import {Card} from "../types/Card";
-import AddCardForm from "../components/AddCardForm";
+
 
 
 export default function Home(){
@@ -13,19 +13,20 @@ export default function Home(){
     },[]);
     
     return(
-        <>
-        <AddCardForm/>
-        <div className="card-grid">
+        <div className="justify-center m-10">
+        
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-2">
             {cards.map((card) =>
-            <div key={card.id} className="border border-gray-300 rounded p-4 mb-4">
-                <img src={card.image_url} alt={card.title}/>
+            <div key={card.id} className="border border-gray-300 rounded p-3 mb-4 flex flex-col items-center w-80">
+                <img src={card.image_url} alt={card.title} className="w-full h-full object-cover" />
                 <h2>{card.title}</h2>
                 <p>{card.description}</p>
                 <span>Posted by: {card.user_instagram}</span>
             </div>
             )}
+         </div>
         </div>
-        </>
+    
         
     );
 };

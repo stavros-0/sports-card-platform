@@ -1,5 +1,10 @@
 import { useState } from "react";
 import axios from "axios";
+import {useDropzone} from "react-dropzone";
+import { useCallback } from "react";
+import DropZone from "../components/DropZone"
+
+
 export default function AddCardForm(){
     
     const [formData,setFormData] = useState({title: "", description: "", image_url: "", user_instagram: ""});
@@ -30,16 +35,25 @@ export default function AddCardForm(){
             }
         }
         
-    };
+    } 
+
+    
     
 
     return(
-        <form onSubmit={handleSubmit}>
-            <input type="text" placeholder="Card Name" value={formData.title} onChange={(e) => setFormData({...formData, title: e.target.value})}/>
-            <input type="text" placeholder="Description" value={formData.description} onChange={(e) => setFormData({...formData, description: e.target.value})}/>
-            <input type="text" placeholder="Instagram" value={formData.user_instagram} onChange={(e) => setFormData({...formData, user_instagram: e.target.value})}/>
-            <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e)} />
-            <button type="submit"> Add Card</button>
+        <div className="justify-center align-center">
+
+        <form onSubmit={handleSubmit} className="flex gap-4 justify-center m-5 p-5 ">
+            <DropZone />
+            <div className="flex flex-col gap-4 w-2/3">
+            <input type="text" placeholder="Card Name" value={formData.title} onChange={(e) => setFormData({...formData, title: e.target.value})} className="p-2 border border-gray-300 rounded w-full"/>
+            <input type="text" placeholder="Description" value={formData.description} onChange={(e) => setFormData({...formData, description: e.target.value})} className="p-2 border border-gray-300 rounded w-full"/>
+            <input type="text" placeholder="Instagram" value={formData.user_instagram} onChange={(e) => setFormData({...formData, user_instagram: e.target.value})} className="p-2 border border-gray-300 rounded w-full"/>
+            <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e)} className="p-2 border border-gray-300 rounded w-full"/>
+            <button type="submit" className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300"> Add Card</button>
+            </div>
         </form>
+        </div>
+
     );
 }
