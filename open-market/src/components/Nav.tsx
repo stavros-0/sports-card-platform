@@ -1,18 +1,24 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 
 export default function Nav(){
+    const location = useLocation();
+
     return(
-        <div className="z-[50] fixed top-0 w-full">
-            <ul className="flex flex-row gap-2 justify-center ">
+        <nav className="z-[50] fixed top-0 w-full bg-white shadow dark:bg-gray-800" >
+            <ul className="container flex items-center justify-center p-8 mx-auto text-gray-600 capitalize dark:text-gray-300">
                 <li>
-                    <Link to={`/home`}>Home</Link>
+                    <Link to={`/home`} className={`text-gray-800 dark:text-gray-200 mx-1.5 sm:mx-6 ${
+                        location.pathname === "/home" ? "border-b-2 border-blue-500" : "border-b-2 border-transparent"
+                        }`}>Home</Link>
                     
                 </li>
                 <li>
-                    <Link to={`/addcard`}>Add Cards</Link>
+                    <Link to={`/addcard`} className={`text-gray-800 dark:text-gray-200 mx-1.5 sm:mx-6 ${
+                        location.pathname === "/addcard" ? "border-b-2 border-blue-500" : "border-b-2 border-transparent"
+                        }`}>Add Cards</Link>
                 </li>
             </ul>
-        </div>
+        </nav>
     )
 }
