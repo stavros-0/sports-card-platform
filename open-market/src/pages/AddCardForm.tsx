@@ -47,7 +47,7 @@ export default function AddCardForm(){
 
     return(
         <div className="flex justify-center items-center h-screen bg-gray-800">
-        <div className="w-full max-w-5xl max-h-3xl bg-white shadow-lg rounded-lg p-8 max-md:max-w-sm">
+        <div className="w-full max-w-5xl max-h-3xl bg-white shadow-lg rounded-lg p-8 max-md:max-w-sm max-md:p-4 ">
                 <div className="flex items-center pb-3 border-b border-gray-200">
                     <div className="flex-1">
                         <h3 className="text-center text-gray-800 text-xl font-bold">Upload Your Card</h3>
@@ -67,7 +67,6 @@ export default function AddCardForm(){
                     }}}/>
                     ) : (<DropZone handleImageUpload={handleImageUpload} />)}
             <div className="flex flex-col gap-4 w-full">
-
             <input type="text" placeholder="Card Name" value={formData.title} onChange={(e) => setFormData({...formData, title: e.target.value})} 
                     className="text-2xl p-2 rounded bg-gray-100 text-gray-800 border border-transparent focus:border-blue-500 focus:outline-none focus:outline--gray-500 selection:bg-blue-300" required/>
 
@@ -80,8 +79,6 @@ export default function AddCardForm(){
             <button type="submit" className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300"> Add Card</button>
             </div>
         </form>
-
-
         </div>
         </div>
        
