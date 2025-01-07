@@ -25,7 +25,7 @@ export default function DropZone({handleImageUpload}: {handleImageUpload : (file
     return(
         <>
         <div {...getRootProps()} className="rounded-lg border-2 border-gray-200 border-dashed mt-6 p-4 min-h-[180px] flex flex-col items-center justify-center text-center cursor-pointer">
-                <input {...getInputProps()} />
+                <input {...getInputProps()} required/>
                 <svg xmlns="http://www.w3.org/2000/svg" className="w-10 mb-4 fill-gray-600 inline-block" viewBox="0 0 32 32">
                 <path
                     d="M23.75 11.044a7.99 7.99 0 0 0-15.5-.009A8 8 0 0 0 9 27h3a1 1 0 0 0 0-2H9a6 6 0 0 1-.035-12 1.038 1.038 0 0 0 1.1-.854 5.991 5.991 0 0 1 11.862 0A1.08 1.08 0 0 0 23 13a6 6 0 0 1 0 12h-3a1 1 0 0 0 0 2h3a8 8 0 0 0 .75-15.956z"
@@ -40,7 +40,7 @@ export default function DropZone({handleImageUpload}: {handleImageUpload : (file
                     (<p className="text-sm text-gray-600">Drag 'n' drop files here, or click to select files</p>)
                 }
             </div>
-            <ul className="grid grid-cols-3 gap-1 mt-4">
+            <ul className="grid grid-cols-3 mt-4">
                 {files.map((file) => (
                     <li key={file.name} className="text-xs text-gray-500">{file.name}
                         <img src={file.preview} alt='' className="mt-2 w-20 h-20 object-cover"/>

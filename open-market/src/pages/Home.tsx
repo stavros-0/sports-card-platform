@@ -11,7 +11,22 @@ export default function Home(){
         .then((response) => setCards(response.data))
         .catch((error)=> console.error(error));
     },[]);
-    
+
+    const isValidInstagramUsername = (username: string) => {
+
+        const trimmedUsername = username.trim();
+        return /^[a-zA-Z0-9._]+$/.test(trimmedUsername);
+    }
+
+    const redirectToInstagram = (username: string) =>{
+        if (!isValidInstagramUsername(username)) {
+            console.error("Invalid Instagram username");
+            return;
+        }
+
+        const instagramURL = `https://instagram.com/${encodeURIComponent(username)}`;
+        window.open(instagramURL, "_blank");
+    };
     return(
         <div className="justify-center m-10">
         
@@ -21,7 +36,7 @@ export default function Home(){
                 <img src={card.image_url} alt={card.title} className="w-full h-full object-cover" />
                 <h2>{card.title}</h2>
                 <p>{card.description}</p>
-                <span>Posted by: {card.user_instagram}</span>
+                <span onClick={() => redirectToInstagram(card.user_instagram)}>Posted by: {card.user_instagram}</span>
             </div>
             )}
          </div>
