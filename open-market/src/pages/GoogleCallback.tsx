@@ -10,8 +10,10 @@ const GoogleCallback: React.FC = () => {
 
         if (code){
             axios.get(`http://localhost:8000/auth/google/callback?code=${code}`).then((response)=> {
-                console.log("User Info:", response.data.user);
+                const token = response.data.token;
+                localStorage.setItem("token",token);
                 localStorage.setItem("user",JSON.stringify(response.data.user));
+                window.location.href = "/home";
             })
             .catch((error)=> {
                 console.error("Error during Google login:", error);

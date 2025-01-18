@@ -1,16 +1,19 @@
-from fastapi import APIRouter,FastAPI,HTTPException, File, UploadFile
+from fastapi import APIRouter,FastAPI,HTTPException, File, UploadFile, Depends, status
+from fastapi.security import OAuth2PasswordBearer
 from backend.crud import get_card_by_id, del_cards, get_user_by_id, del_users, add_users, get_cards, add_cards
 import sqlite3
 import os
 import shutil
 from datetime import datetime, timedelta
 import boto3
+from jose import JWTError, jwt
+from google import verify_token
 
 router = APIRouter()
 
 #connect get_card_by_id to api route
 @router.get("/cards/{id}")
-def read_cards(id:int):
+def read_cards(id:int, current_user: str = Depends(verify_token)):
     conn = sqlite3.connect(os.path.abspath("cards.db"))
     card = get_card_by_id(conn, id)
     conn.close()
@@ -20,7 +23,7 @@ def read_cards(id:int):
 
 #get all cards
 @router.get("/cards/")
-def get_all_cards():
+def get_all_cards(current_user: str = Depends(verify_token)):
     conn = sqlite3.connect(os.path.abspath("cards.db"))
     conn.row_factory = sqlite3.Row
     cards = get_cards(conn)
@@ -42,7 +45,7 @@ def get_all_cards():
 
 #remove_cards
 @router.delete("/cards/{id}")
-def remove_cards(id:int):
+def remove_cards(id:int,current_user: str = Depends(verify_token)):
     conn = sqlite3.connect(os.path.abspath("cards.db"))
     delete = del_cards(conn,id)
     conn.close()
@@ -52,7 +55,7 @@ def remove_cards(id:int):
 
 #add_cards
 @router.post("/cards/")
-def adding_cards(card:dict):
+def adding_cards(card:dict,current_user: str = Depends(verify_token)):
     conn = sqlite3.connect(os.path.abspath("cards.db"))
     new_id = add_cards(conn, (card["title"], card["description"], card["image_url"], card["user_instagram"]))
     conn.close()

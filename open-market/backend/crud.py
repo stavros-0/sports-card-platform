@@ -1,4 +1,6 @@
 import sqlite3
+from fastapi import Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer
 
 def add_cards(conn, card):
     sql = ''' INSERT INTO cards(title, description, image_url, user_instagram)
@@ -76,4 +78,6 @@ def add_users(conn, card):
     except sqlite3.OperationError as e:
         print(e)
         return -1
+    
+
     

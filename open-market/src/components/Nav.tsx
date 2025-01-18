@@ -8,8 +8,8 @@ export default function Nav(){
     return(
         <>
         <nav className="border-gray-200 dark:bg-gray-800 dark:border-gray-700 md:hidden">
-            <div className="relative max-w-screen-xl flex flex-wrap items-center justify-end mx-auto p-4">
-            
+        <div className="relative w-full flex flex-wrap items-center justify-end p-4">
+
             <button onClick={() => setMenuOpen(!menuOpen)} 
                     type="button" className="inline-flex items-center justify-center p-2 w-10 h-10 text-sm text-gray-500 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600" 
                     area-expanded={menuOpen}>
@@ -20,16 +20,17 @@ export default function Nav(){
             </button>
             {/* Menu Open */}
             <div className={`${menuOpen ? "absolute top-full left-0 w-full flex flex-col items-center justify-center" : "hidden"} bg-gray-50 dark:bg-gray-800 dark:border-gray-700 z-50`} id="navbar-hamburger">
-                <ul className="flex flex-col items-center justify-center font-medium rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
+            <ul className="flex flex-col items-center justify-center font-medium rounded-lg bg-gray-50 dark:bg-gray-800 w-full">
+
                 <li>
-                    <Link to={`/home`} className={`text-gray-800 text-lg dark:text-gray-200 mx-1.5 sm:mx-6 ${
+                    <Link to={`/home`} onClick={() => setMenuOpen(false)} className={`text-gray-800 text-lg dark:text-gray-200 mx-1.5 sm:mx-6 ${
                         location.pathname === "/home" ? "border-b-2 border-blue-500 hover:text-current" 
                                                       : "border-b-2 border-transparent hover:border-blue-500 hover:text-current"
                         }`}>Home
                     </Link>
                 </li>
                 <li>
-                    <Link to={`/addcard`} className={`text-gray-800 mt-2 text-lg dark:text-gray-200 mx-1.5 sm:mx-6 ${
+                    <Link to={`/addcard`} onClick={() => setMenuOpen(false)} className={`text-gray-800 mt-2 text-lg dark:text-gray-200 mx-1.5 sm:mx-6 ${
                         location.pathname === "/addcard" ? "border-b-2 border-blue-500 hover:text-current" 
                                                          : "border-b-2 border-transparent hover:border-blue-500 hover:text-current"
                         }`}>Add Cards

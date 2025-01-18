@@ -4,6 +4,7 @@ import GoogleCallback from "./pages/GoogleCallback";
 import Home from "./pages/Home";
 import Nav from "./components/Nav";
 import AddCardForm from "./pages/AddCardForm";
+import "./api/axios";
 
 const Layout = () => (
   <>

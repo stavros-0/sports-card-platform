@@ -23,14 +23,15 @@ export default function Home(){
             console.error("Invalid Instagram username");
             return;
         }
-
+        
         const instagramURL = `https://instagram.com/${encodeURIComponent(username)}`;
         window.open(instagramURL, "_blank");
     };
     return(
-        <div className="justify-center m-10">
         
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-2">
+        <div className="w-full flex justify-center items-center bg-gray-800 md:pt-20">
+        
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-6 p-6">
             {cards.map((card) =>
             <div key={card.id} className="border border-gray-300 rounded p-3 mb-4 flex flex-col items-center w-80">
                 <img src={card.image_url} alt={card.title} className="w-full h-full object-cover" />
@@ -41,7 +42,5 @@ export default function Home(){
             )}
          </div>
         </div>
-    
-        
     );
 };
