@@ -1,5 +1,6 @@
-from fastapi import APIRouter, HTTPException, Depends, status
-from fastapi.security import OAuth2PasswordBearer
+from fastapi import APIRouter, HTTPException, Response, Depends, status
+
+from fastapi.responses import RedirectResponse
 import urllib.parse
 from dotenv import load_dotenv
 import os
@@ -7,11 +8,9 @@ import requests
 from fastapi.responses import RedirectResponse
 import sqlite3
 import os
-from jose import jwt, JWTError
-import secrets
-from datetime import datetime, timedelta
-router = APIRouter()
 
+
+router = APIRouter()
 load_dotenv()
 
 CLIENT_ID = os.getenv('CLIENT_ID')
@@ -20,30 +19,7 @@ CLIENT_SECRET = os.getenv('CLIENT_SECRET')
 PROJECT_DIR = os.path.dirname(os.path.abspath("open-market"))
 DB_PATH = os.path.join(PROJECT_DIR, "cards.db") 
 FRONTEND_URL = os.getenv("FRONTEND_URL")
-ALGORITHM = "HS256"
-SECRET_KEY = secrets.token_hex(32)
 
-
-def create_acess_token(data: dict, expires_delta: timedelta = None):
-    to_encode = data.copy()
-    if expires_delta:
-        expire = datetime.utcnow() + expires_delta
-    else:
-        expire = datetime.utcnow() + timedelta(minutes=15)
-    to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-    return encoded_jwt
-
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
-def verify_token(token: str = Depends(oauth2_scheme)):
-    try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        email = payload.get("sub")
-        if email is None:
-            raise HTTPException(status_code=401, detail="Invalid token")
-        return email
-    except JWTError:
-        raise HTTPException(status_code=401, detail="Invalid token")
 
 #Generates a Google OAuth URL and redirects the user to Google for login and consent.
 @router.get("/auth/google")
@@ -58,7 +34,7 @@ def google_login():
 
 #Handles the redirect from Google after user login.
 @router.get("/auth/google/callback")
-def google_callback(code: str):
+def google_callback(code: str, response: Response):
     token_url = "https://oauth2.googleapis.com/token"
     payload = {
         "client_id": CLIENT_ID,
@@ -73,13 +49,12 @@ def google_callback(code: str):
 
     if not access_token:
         raise HTTPException(status_code=400, detail="Failed to retrieve access token")
+    
+    response.set_cookie(key="access_token", value=access_token, httponly=True, samesite="Lax", secure=True) 
 
     user_info = requests.get("https://www.googleapis.com/oauth2/v1/userinfo",
                              headers={"Authorization": f"Bearer {access_token}"}).json()
     
-    data = {"sub": user_info.get("id"), "name": user_info.get("name"), "email": user_info.get("email")}
-    jwt_token = create_acess_token(data)
-
     name = user_info.get("name")
     email = user_info.get("email")
     instagram = None
@@ -91,8 +66,8 @@ def google_callback(code: str):
         "SELECT * FROM users WHERE email = ?", (email,)
     ).fetchone()
     if existing_user:
-
-        return RedirectResponse(url="http://localhost:5173/home?token={jwt_token}")
+        frontend_url = f"http://localhost:5173/home"
+        return RedirectResponse(url=frontend_url)
     else:
         cur.execute(
             "INSERT INTO users (name, email, instagram) VALUES(?,?,?)",
@@ -101,7 +76,8 @@ def google_callback(code: str):
         conn.commit()
         new_user_id = cur.lastrowid
         conn.close()
-        return RedirectResponse(url="http://localhost:5173/home?token={jwt_token}")
+        frontend_url = f"http://localhost:5173/home"
+        return RedirectResponse(url=frontend_url)
         
 
     
