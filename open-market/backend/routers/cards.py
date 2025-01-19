@@ -1,4 +1,5 @@
-from fastapi import APIRouter,FastAPI,HTTPException, File, UploadFile, Depends, status
+from fastapi import APIRouter,FastAPI,HTTPException, File, UploadFile
+from fastapi_utils.tasks import repeat_every
 from backend.crud import get_card_by_id, del_cards, get_user_by_id, del_users, add_users, get_cards, add_cards
 import sqlite3
 import os
@@ -8,6 +9,27 @@ import boto3
 
 
 router = APIRouter()
+app = FastAPI()
+
+BUCKET_NAME = os.getenv("S3_BUCKET_NAME")
+
+@app.on_event("startup")
+@repeat_every(seconds=7200)
+def delete_expired_cards():
+    conn = sqlite3.connect(os.path.abspath("cards.db"))
+    cur = conn.cursor()
+    cur.execute("SELECT image_url FROM cards WHERE created_at < ?", (datetime.now() - timedelta(hours=24),))
+    expired_cards = cur.fetchall()
+
+    for card in expired_cards:
+        if card["image_url"]:
+            s3_client.delete_object(Bucket=BUCKET_NAME, Key=card["image_url"])
+
+    cur.execute("DELETE FROM cards WHERE created_at < ?", (datetime.now() - timedelta(hours=24),))
+    conn.commit()
+    conn.close()
+
+app.include_router(router)
 
 #connect get_card_by_id to api route
 @router.get("/cards/{id}")
@@ -32,7 +54,7 @@ def get_all_cards():
             continue
         card["image_url"] = s3_client.generate_presigned_url(
             'get_object',
-            Params={'Bucket': 'openmarketimages', 'Key': card["image_url"]},
+            Params={'Bucket': BUCKET_NAME, 'Key': card["image_url"]},
             ExpiresIn=3600
         )
     
