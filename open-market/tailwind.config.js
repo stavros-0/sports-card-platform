@@ -5,7 +5,13 @@ export default {
       './public/index.html',
   ],
   theme: {
-      extend: {},
+      extend: {
+        colors: {
+          navy:{
+            800: '#0A192F',
+          }
+        }
+      },
   },
   plugins: [],
 };

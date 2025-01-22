@@ -54,7 +54,7 @@ def get_all_cards():
             continue
         card["image_url"] = s3_client.generate_presigned_url(
             'get_object',
-            Params={'Bucket': BUCKET_NAME, 'Key': card["image_url"]},
+            Params={'Bucket': 'openmarketimages', 'Key': card["image_url"]},
             ExpiresIn=3600
         )
     
@@ -127,7 +127,7 @@ async def upload_image(file: UploadFile = File(...)):
     bucket_name = os.getenv("S3_BUCKET_NAME")
     file_path=f"uploads/{file.filename}"
     try:
-        s3_client.upload_fileobj(file.file, bucket_name, file_path )
+        s3_client.upload_fileobj(file.file, 'openmarketimages', file_path )
         return {"url": file_path}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error uploading file: {str(e)}")

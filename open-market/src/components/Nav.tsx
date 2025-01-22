@@ -36,6 +36,13 @@ export default function Nav(){
                         }`}>Add Cards
                     </Link>        
                 </li>
+                <li>
+                  <Link to={`/about`} onClick={() => setMenuOpen(false)} className={`text-gray-800 mt-2 text-lg dark:text-gray-200 mx-1.5 sm:mx-6 ${
+                    location.pathname === "/about" ? "border-b-2 border-blue-500 hover:text-current" 
+                                                   : "border-b-2 border-transparent hover:border-blue-500 hover:text-current"
+                    }`}>About
+                  </Link>        
+                </li>
                 </ul>
                 </div>
             </div>
@@ -54,6 +61,13 @@ export default function Nav(){
                         location.pathname === "/addcard" ? "border-b-2 border-blue-500 hover:text-current" 
                                                          : "border-b-2 border-transparent hover:border-blue-500 hover:text-current"
                         }`}>Add Cards</Link>
+                </li>
+                <li>
+                  <Link to={`/about`} onClick={() => setMenuOpen(false)} className={`text-gray-800 mt-2 text-lg dark:text-gray-200 mx-1.5 sm:mx-6 ${
+                    location.pathname === "/about" ? "border-b-2 border-blue-500 hover:text-current" 
+                                                   : "border-b-2 border-transparent hover:border-blue-500 hover:text-current"
+                    }`}>About
+                  </Link>        
                 </li>
             </ul>
         </nav>

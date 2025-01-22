@@ -28,7 +28,7 @@ export default function Home(){
         window.open(instagramURL, "_blank");
     };
     return (
-        <div className="w-full flex justify-center items-center bg-gray-800 md:pt-20">
+        <div className="w-full min-h-screen flex justify-center items-center bg-gray-800 md:pt-20">
             <div className="grid xs:grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 p-6 md:p-6">
                 {cards.map((card) => (
                     <div
